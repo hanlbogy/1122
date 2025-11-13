@@ -387,8 +387,8 @@
                 <label for="userGrade">학년</label>
                 <select id="userGrade">
                     <option value="">학년을 선택하세요</option>
-                    <option value="초등학교 34학년">초등학교 34학년</option>
-                    <option value="초등학교 56학년">초등학교 56학년</option>
+                    <option value="초등학교 3-4학년">초등학교 3-4학년</option>
+                    <option value="초등학교 5-6학년">초등학교 5-6학년</option>
                     <option value="중학교 1학년">중학교 1학년</option>
                     <option value="중학교 2학년">중학교 2학년</option>
                     <option value="중학교 3학년">중학교 3학년</option>
@@ -426,8 +426,8 @@
                         <div class="info-value" id="resultName"></div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">소속</div>
-                        <div class="info-value" id="resultSchool"></div>
+                        <div class="info-label">학년</div>
+                        <div class="info-value" id="resultGrade"></div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">진단일</div>
@@ -864,7 +864,6 @@
         let currentQuestion = 0;
         let scores = {};
         let userName = "";
-        let userSchool = "";
         let userGrade = "";
 
         function initializeScores() {
@@ -884,11 +883,10 @@
 
         function startQuiz() {
             userName = document.getElementById("userName").value.trim();
-            userSchool = document.getElementById("userSchool").value.trim();
             userGrade = document.getElementById("userGrade").value;
 
-            if (!userName || !userSchool || !userGrade) {
-                alert("이름, 소속, 학년을 모두 입력해주세요.");
+            if (!userName || !userGrade) {
+                alert("이름과 학년을 모두 입력해주세요.");
                 return;
             }
 
@@ -946,7 +944,7 @@
             const dateStr = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
 
             document.getElementById("resultName").textContent = userName;
-            document.getElementById("resultSchool").textContent = userSchool;
+            document.getElementById("resultGrade").textContent = userGrade;
             document.getElementById("resultDate").textContent = dateStr;
             document.getElementById("resultType").textContent = type;
 
@@ -1006,7 +1004,6 @@
         function resetQuiz() {
             showScreen("startScreen");
             document.getElementById("userName").value = "";
-            document.getElementById("userSchool").value = "";
             document.getElementById("userGrade").value = "";
         }
     </script>
