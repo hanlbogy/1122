@@ -1,0 +1,88 @@
+import { useState } from 'react';
+import { StartScreen } from '@/components/StartScreen';
+import { QuizScreen } from '@/components/QuizScreen';
+import { ResultReport } from '@/components/ResultReport';
+import { quizData } from '@/data/quizData';
+
+type Screen = 'start' | 'quiz' | 'result';
+
+const Index = () => {
+  const [screen, setScreen] = useState<Screen>('start');
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [scores, setScores] = useState<Record<string, number>>({});
+  const [userInfo, setUserInfo] = useState({ name: '', grade: '' });
+  const [resultType, setResultType] = useState('');
+
+  const initializeScores = () => {
+    return {
+      '기획자': 0,
+      '분석가': 0,
+      '조력자': 0,
+      '실행가': 0,
+      '제작자': 0,
+      '관리자': 0,
+      '전달자': 0,
+      '개척가': 0,
+      '중재자': 0,
+      '혁신가': 0
+    };
+  };
+
+  const handleStart = (name: string, grade: string) => {
+    setUserInfo({ name, grade });
+    setScores(initializeScores());
+    setCurrentQuestion(0);
+    setScreen('quiz');
+  };
+
+  const handleAnswer = (type: string) => {
+    const newScores = { ...scores };
+    newScores[type] = (newScores[type] || 0) + 1;
+    setScores(newScores);
+
+    if (currentQuestion + 1 < quizData.length) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      // Calculate result
+      let maxScore = -1;
+      let finalType = '';
+      
+      for (const [type, score] of Object.entries(newScores)) {
+        if (score > maxScore) {
+          maxScore = score;
+          finalType = type;
+        }
+      }
+      
+      setResultType(finalType);
+      setScreen('result');
+    }
+  };
+
+  const handleReset = () => {
+    setScreen('start');
+    setCurrentQuestion(0);
+    setScores({});
+    setUserInfo({ name: '', grade: '' });
+    setResultType('');
+  };
+
+  return (
+    <>
+      {screen === 'start' && <StartScreen onStart={handleStart} />}
+      {screen === 'quiz' && (
+        <QuizScreen currentQuestion={currentQuestion} onAnswer={handleAnswer} />
+      )}
+      {screen === 'result' && (
+        <ResultReport
+          name={userInfo.name}
+          grade={userInfo.grade}
+          resultType={resultType}
+          onReset={handleReset}
+        />
+      )}
+    </>
+  );
+};
+
+export default Index;
