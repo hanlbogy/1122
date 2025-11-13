@@ -1,88 +1,514 @@
-import { useState } from 'react';
-import { StartScreen } from '@/components/StartScreen';
-import { QuizScreen } from '@/components/QuizScreen';
-import { ResultReport } from '@/components/ResultReport';
-import { quizData } from '@/data/quizData';
-
-type Screen = 'start' | 'quiz' | 'result';
-
-const Index = () => {
-  const [screen, setScreen] = useState<Screen>('start');
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [scores, setScores] = useState<Record<string, number>>({});
-  const [userInfo, setUserInfo] = useState({ name: '', grade: '' });
-  const [resultType, setResultType] = useState('');
-
-  const initializeScores = () => {
-    return {
-      '기획자': 0,
-      '분석가': 0,
-      '조력자': 0,
-      '실행가': 0,
-      '제작자': 0,
-      '관리자': 0,
-      '전달자': 0,
-      '개척가': 0,
-      '중재자': 0,
-      '혁신가': 0
-    };
-  };
-
-  const handleStart = (name: string, grade: string) => {
-    setUserInfo({ name, grade });
-    setScores(initializeScores());
-    setCurrentQuestion(0);
-    setScreen('quiz');
-  };
-
-  const handleAnswer = (type: string) => {
-    const newScores = { ...scores };
-    newScores[type] = (newScores[type] || 0) + 1;
-    setScores(newScores);
-
-    if (currentQuestion + 1 < quizData.length) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      // Calculate result
-      let maxScore = -1;
-      let finalType = '';
-      
-      for (const [type, score] of Object.entries(newScores)) {
-        if (score > maxScore) {
-          maxScore = score;
-          finalType = type;
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>진로 적성 진단검사</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-      }
-      
-      setResultType(finalType);
-      setScreen('result');
-    }
-  };
 
-  const handleReset = () => {
-    setScreen('start');
-    setCurrentQuestion(0);
-    setScores({});
-    setUserInfo({ name: '', grade: '' });
-    setResultType('');
-  };
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-  return (
-    <>
-      {screen === 'start' && <StartScreen onStart={handleStart} />}
-      {screen === 'quiz' && (
-        <QuizScreen currentQuestion={currentQuestion} onAnswer={handleAnswer} />
-      )}
-      {screen === 'result' && (
-        <ResultReport
-          name={userInfo.name}
-          grade={userInfo.grade}
-          resultType={resultType}
-          onReset={handleReset}
-        />
-      )}
-    </>
-  );
-};
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
 
-export default Index;
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: block;
+            margin: 30px auto 0;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .progress-bar {
+            background: #f0f0f0;
+            height: 10px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .question-number {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            background: #f8f9ff;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            font-size: 1.3em;
+            text-align: center;
+            color: #333;
+            border-left: 5px solid #667eea;
+        }
+
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .answer-btn {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+
+        .answer-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateX(10px);
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .result-type {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .result-desc {
+            background: white;
+            color: #333;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .result-section {
+            margin-bottom: 25px;
+        }
+
+        .result-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .result-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .result-section li {
+            padding: 10px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .result-section li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+                padding: 20mm;
+            }
+
+            .btn {
+                display: none;
+            }
+
+            @page {
+                size: A4;
+                margin: 15mm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 시작 화면 -->
+        <div id="startScreen" class="screen active">
+            <h1>🎯 진로 적성 진단검사</h1>
+            <p style="text-align: center; color: #666; margin-bottom: 40px; font-size: 1.1em;">
+                당신의 숨겨진 재능과 적성을 발견해보세요
+            </p>
+            <div class="input-group">
+                <label for="userName">이름</label>
+                <input type="text" id="userName" placeholder="이름을 입력하세요">
+            </div>
+            <div class="input-group">
+                <label for="userGrade">학년</label>
+                <select id="userGrade">
+                    <option value="">학년을 선택하세요</option>
+                    <option value="중1">중학교 1학년</option>
+                    <option value="중2">중학교 2학년</option>
+                    <option value="중3">중학교 3학년</option>
+                    <option value="고1">고등학교 1학년</option>
+                    <option value="고2">고등학교 2학년</option>
+                    <option value="고3">고등학교 3학년</option>
+                </select>
+            </div>
+            <button class="btn" onclick="startQuiz()">검사 시작하기</button>
+        </div>
+
+        <!-- 퀴즈 화면 -->
+        <div id="quizScreen" class="screen">
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="question-number" id="questionNumber">질문 1/20</div>
+            <div class="question-text" id="questionText"></div>
+            <div class="answers" id="answersContainer"></div>
+        </div>
+
+        <!-- 결과 화면 -->
+        <div id="resultScreen" class="screen">
+            <div class="result-card">
+                <div style="font-size: 1.2em; margin-bottom: 10px;">
+                    <span id="resultName"></span> (<span id="resultGrade"></span>)님의 진로 적성 유형
+                </div>
+                <div class="result-type" id="resultType"></div>
+            </div>
+            <div class="result-desc">
+                <div class="result-section">
+                    <h3>📋 유형 설명</h3>
+                    <p id="typeDescription"></p>
+                </div>
+                <div class="result-section">
+                    <h3>💪 핵심 강점</h3>
+                    <ul id="strengthsList"></ul>
+                </div>
+                <div class="result-section">
+                    <h3>🎓 추천 진로</h3>
+                    <ul id="careersList"></ul>
+                </div>
+                <div class="result-section">
+                    <h3>📚 발전 방향</h3>
+                    <ul id="developmentList"></ul>
+                </div>
+            </div>
+            <button class="btn" onclick="printResult()">결과 출력하기 (A4)</button>
+            <button class="btn" onclick="resetQuiz()" style="background: #6c757d;">다시 검사하기</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            { question: "프로젝트를 시작할 때 나는...", answers: [{text: "전체 계획을 먼저 세운다", type: "기획자"}, {text: "데이터와 자료를 수집한다", type: "분석가"}]},
+            { question: "팀 활동에서 나는...", answers: [{text: "팀원들의 의견을 조율한다", type: "조력자"}, {text: "실제 작업을 주도한다", type: "실행가"}]},
+            { question: "무언가를 만들 때 나는...", answers: [{text: "창의적인 작품을 만든다", type: "제작자"}, {text: "효율적인 시스템을 구축한다", type: "관리자"}]},
+            { question: "발표를 할 때 나는...", answers: [{text: "청중과 소통하며 전달한다", type: "전달자"}, {text: "새로운 아이디어를 제시한다", type: "개척가"}]},
+            { question: "문제가 생겼을 때 나는...", answers: [{text: "다양한 관점에서 조정한다", type: "중재자"}, {text: "창의적인 해결책을 찾는다", type: "혁신가"}]},
+            { question: "여가 시간에 나는...", answers: [{text: "미래 계획을 구상한다", type: "기획자"}, {text: "책이나 자료를 읽는다", type: "분석가"}]},
+            { question: "친구가 고민 상담을 하면...", answers: [{text: "공감하며 위로해준다", type: "조력자"}, {text: "구체적인 해결책을 제시한다", type: "실행가"}]},
+            { question: "새로운 취미를 시작한다면...", answers: [{text: "손으로 만드는 활동", type: "제작자"}, {text: "체계적으로 관리하는 활동", type: "관리자"}]},
+            { question: "SNS에 글을 쓸 때...", answers: [{text: "사람들의 반응을 고려한다", type: "전달자"}, {text: "남들과 다른 콘텐츠를 만든다", type: "개척가"}]},
+            { question: "의견 충돌이 있을 때...", answers: [{text: "양쪽의 입장을 이해시킨다", type: "중재자"}, {text: "제3의 대안을 제시한다", type: "혁신가"}]},
+            { question: "학교 축제 준비 시...", answers: [{text: "전체 일정과 역할을 배분한다", type: "기획자"}, {text: "과거 사례를 분석한다", type: "분석가"}]},
+            { question: "동아리 활동에서...", answers: [{text: "후배들을 잘 챙긴다", type: "조력자"}, {text: "활동을 적극적으로 실천한다", type: "실행가"}]},
+            { question: "작품을 완성할 때...", answers: [{text: "독창성에 집중한다", type: "제작자"}, {text: "완성도에 집중한다", type: "관리자"}]},
+            { question: "사람들 앞에서...", answers: [{text: "자신있게 의견을 말한다", type: "전달자"}, {text: "새로운 관점을 제시한다", type: "개척가"}]},
+            { question: "갈등 상황에서...", answers: [{text: "타협점을 찾는다", type: "중재자"}, {text: "근본적인 해결을 모색한다", type: "혁신가"}]},
+            { question: "목표를 설정할 때...", answers: [{text: "단계별 계획을 세운다", type: "기획자"}, {text: "목표 달성 가능성을 분석한다", type: "분석가"}]},
+            { question: "봉사 활동을 한다면...", answers: [{text: "사람들을 직접 돕는다", type: "조력자"}, {text: "봉사 프로그램을 운영한다", type: "실행가"}]},
+            { question: "창작 활동을 할 때...", answers: [{text: "예술적 표현을 중시한다", type: "제작자"}, {text: "체계적인 구성을 중시한다", type: "관리자"}]},
+            { question: "정보를 공유할 때...", answers: [{text: "이해하기 쉽게 설명한다", type: "전달자"}, {text: "새로운 시각으로 해석한다", type: "개척가"}]},
+            { question: "문제 해결 과정에서...", answers: [{text: "모두가 만족할 방법을 찾는다", type: "중재자"}, {text: "기존과 다른 방식을 시도한다", type: "혁신가"}]}
+        ];
+
+        const resultData = {
+            "기획자": {
+                description: "체계적이고 전략적인 사고로 프로젝트를 설계하고 관리하는 능력이 뛰어납니다. 큰 그림을 보며 장기적인 계획을 수립하는 데 탁월합니다.",
+                strengths: ["전략적 사고력", "체계적인 기획력", "목표 설정 능력", "조직 관리 능력"],
+                careers: ["기획자", "프로젝트 매니저", "컨설턴트", "전략가", "경영기획자"],
+                development: ["실행력 강화", "유연성 키우기", "세부 실행 능력 향상", "즉흥적 대응 능력 개발"]
+            },
+            "분석가": {
+                description: "데이터와 정보를 수집하고 분석하여 논리적인 결론을 도출하는 능력이 뛰어납니다. 객관적이고 합리적인 판단을 중시합니다.",
+                strengths: ["논리적 사고력", "데이터 분석 능력", "객관적 판단력", "문제 해결 능력"],
+                careers: ["데이터 분석가", "연구원", "회계사", "금융 애널리스트", "시장조사원"],
+                development: ["창의성 개발", "직관력 키우기", "대인관계 능력 향상", "빠른 의사결정 훈련"]
+            },
+            "조력자": {
+                description: "타인을 돕고 지원하는 것에서 보람을 느끼며, 공감 능력과 배려심이 뛰어납니다. 팀의 화합과 협력을 중시합니다.",
+                strengths: ["공감 능력", "협력 능력", "경청 능력", "조직 내 화합 능력"],
+                careers: ["상담사", "사회복지사", "교사", "간호사", "HR 전문가"],
+                development: ["자기주장 능력 강화", "리더십 개발", "경계 설정 능력", "자기 관리 능력"]
+            },
+            "실행가": {
+                description: "계획을 실제로 실행하고 결과를 만들어내는 능력이 뛰어납니다. 추진력과 실천력이 강하며 목표 달성에 집중합니다.",
+                strengths: ["추진력", "실행력", "목표 지향성", "결단력"],
+                careers: ["영업 관리자", "운영 관리자", "프로젝트 실행자", "스타트업 운영자", "이벤트 기획자"],
+                development: ["전략적 사고 개발", "장기적 계획 수립", "인내심 키우기", "분석력 향상"]
+            },
+            "제작자": {
+                description: "창의적인 아이디어를 실제 작품이나 결과물로 만들어내는 능력이 뛰어납니다. 예술적 감각과 표현력이 풍부합니다.",
+                strengths: ["창의력", "표현력", "예술적 감각", "독창성"],
+                careers: ["디자이너", "예술가", "건축가", "크리에이티브 디렉터", "콘텐츠 크리에이터"],
+                development: ["실용성 고려", "비즈니스 마인드", "협업 능력 향상", "마감 관리 능력"]
+            },
+            "관리자": {
+                description: "시스템과 프로세스를 효율적으로 관리하고 최적화하는 능력이 뛰어납니다. 조직화와 체계화를 중시합니다.",
+                strengths: ["조직 관리 능력", "효율성 추구", "시스템 구축 능력", "세심함"],
+                careers: ["운영 관리자", "행정 전문가", "품질 관리자", "시설 관리자", "사무 관리자"],
+                development: ["창의성 개발", "유연성 키우기", "변화 수용력", "리스크 관리 능력"]
+            },
+            "전달자": {
+                description: "정보와 메시지를 효과적으로 전달하고 소통하는 능력이 뛰어납니다. 프레젠테이션과 커뮤니케이션에 강합니다.",
+                strengths: ["소통 능력", "발표 능력", "설득력", "표현력"],
+                careers: ["마케터", "홍보 전문가", "강사", "아나운서", "작가"],
+                development: ["경청 능력 향상", "깊이 있는 분석", "인내심 개발", "비언어적 소통 능력"]
+            },
+            "개척가": {
+                description: "새로운 분야를 개척하고 도전하는 것을 즐기며, 모험심과 개척 정신이 강합니다. 변화와 혁신을 주도합니다.",
+                strengths: ["도전 정신", "개척 정신", "모험심", "변화 주도력"],
+                careers: ["기업가", "탐험가", "개발자", "신사업 기획자", "벤처 투자자"],
+                development: ["신중함 키우기", "위험 관리 능력", "인내심 개발", "체계적 접근법"]
+            },
+            "중재자": {
+                description: "갈등을 조정하고 다양한 의견을 조율하는 능력이 뛰어납니다. 균형감각과 중립성을 유지하며 화해를 이끌어냅니다.",
+                strengths: ["조정 능력", "중립성", "균형감각", "갈등 해결 능력"],
+                careers: ["중재자", "협상 전문가", "외교관", "노무사", "법조인"],
+                development: ["자기주장 능력", "빠른 의사결정", "리더십 개발", "확고한 입장 표명"]
+            },
+            "혁신가": {
+                description: "기존의 틀을 깨고 혁신적인 아이디어를 제시하는 능력이 뛰어납니다. 창의적 문제 해결과 변화를 추구합니다.",
+                strengths: ["혁신적 사고", "창의적 문제 해결", "변화 주도", "독창성"],
+                careers: ["연구개발자", "혁신 컨설턴트", "발명가", "테크 기업가", "미래학자"],
+                development: ["실용성 고려", "점진적 접근", "현실성 검토", "실행력 강화"]
+            }
+        };
+
+        let currentQuestion = 0;
+        let scores = {};
+        let userName = "";
+        let userGrade = "";
+
+        function initializeScores() {
+            scores = {
+                "기획자": 0, "분석가": 0, "조력자": 0, "실행가": 0, "제작자": 0,
+                "관리자": 0, "전달자": 0, "개척가": 0, "중재자": 0, "혁신가": 0
+            };
+        }
+
+        function startQuiz() {
+            userName = document.getElementById("userName").value.trim();
+            userGrade = document.getElementById("userGrade").value;
+
+            if (!userName || !userGrade) {
+                alert("이름과 학년을 입력해주세요.");
+                return;
+            }
+
+            initializeScores();
+            currentQuestion = 0;
+            showScreen("quizScreen");
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            const progress = ((currentQuestion + 1) / quizData.length) * 100;
+            document.getElementById("progressFill").style.width = progress + "%";
+            document.getElementById("questionNumber").textContent = `질문 ${currentQuestion + 1}/${quizData.length}`;
+            document.getElementById("questionText").textContent = quizData[currentQuestion].question;
+
+            const answersContainer = document.getElementById("answersContainer");
+            answersContainer.innerHTML = "";
+
+            quizData[currentQuestion].answers.forEach(answer => {
+                const btn = document.createElement("button");
+                btn.className = "answer-btn";
+                btn.textContent = answer.text;
+                btn.onclick = () => handleAnswer(answer.type);
+                answersContainer.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(type) {
+            scores[type]++;
+
+            if (currentQuestion + 1 < quizData.length) {
+                currentQuestion++;
+                displayQuestion();
+            } else {
+                calculateResult();
+            }
+        }
+
+        function calculateResult() {
+            let maxScore = -1;
+            let resultType = "";
+
+            for (const [type, score] of Object.entries(scores)) {
+                if (score > maxScore) {
+                    maxScore = score;
+                    resultType = type;
+                }
+            }
+
+            displayResult(resultType);
+        }
+
+        function displayResult(type) {
+            document.getElementById("resultName").textContent = userName;
+            document.getElementById("resultGrade").textContent = userGrade;
+            document.getElementById("resultType").textContent = type;
+
+            const data = resultData[type];
+            document.getElementById("typeDescription").textContent = data.description;
+
+            const strengthsList = document.getElementById("strengthsList");
+            strengthsList.innerHTML = "";
+            data.strengths.forEach(strength => {
+                const li = document.createElement("li");
+                li.textContent = strength;
+                strengthsList.appendChild(li);
+            });
+
+            const careersList = document.getElementById("careersList");
+            careersList.innerHTML = "";
+            data.careers.forEach(career => {
+                const li = document.createElement("li");
+                li.textContent = career;
+                careersList.appendChild(li);
+            });
+
+            const developmentList = document.getElementById("developmentList");
+            developmentList.innerHTML = "";
+            data.development.forEach(dev => {
+                const li = document.createElement("li");
+                li.textContent = dev;
+                developmentList.appendChild(li);
+            });
+
+            showScreen("resultScreen");
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll(".screen").forEach(screen => {
+                screen.classList.remove("active");
+            });
+            document.getElementById(screenId).classList.add("active");
+        }
+
+        function printResult() {
+            window.print();
+        }
+
+        function resetQuiz() {
+            showScreen("startScreen");
+            document.getElementById("userName").value = "";
+            document.getElementById("userGrade").value = "";
+        }
+    </script>
+</body>
+</html>
