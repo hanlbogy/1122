@@ -4,7 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>진로 드림 강점 분석 (초등용)</title>
+    <!-- 예쁜 한글 폰트 추가 (주아체, 고운돋움) -->
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #9b59b6;
+            --secondary-color: #8e44ad;
+            --accent-color: #ff7eb3;
+            --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,59 +22,76 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Jalnan', 'Malgun Gothic', sans-serif;
-            /* 눈이 편안한 핑크-보라 그라데이션 */
-            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); 
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); /* 백업 */
-            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); /* 최종 선택: 부드러운 보라-핑크 */
+            font-family: 'Gowun Dodum', sans-serif;
+            background: var(--bg-gradient);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            color: #333;
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 25px;
-            padding: 30px;
-            max-width: 800px;
+            background: var(--card-bg);
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 700px;
             width: 100%;
-            box-shadow: 0 20px 60px rgba(161, 140, 209, 0.3);
-            max-height: 95vh;
-            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(142, 68, 173, 0.2);
+            position: relative;
+            overflow: hidden;
             border: 4px solid #fff;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
         }
 
-        .screen { display: none; }
-        .screen.active { display: block; animation: fadeIn 0.5s; }
+        /* 화면 전환 효과 */
+        .screen {
+            display: none;
+            flex-direction: column;
+            flex-grow: 1;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        .screen.active {
+            display: flex;
+            opacity: 1;
+            animation: slideUp 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         h1 {
-            color: #9b59b6; /* 부드러운 보라색 */
+            font-family: 'Jua', sans-serif;
+            color: var(--primary-color);
             text-align: center;
-            margin-bottom: 10px;
-            font-size: 2em;
-            word-break: keep-all;
-            font-weight: 800;
+            margin-bottom: 15px;
+            font-size: 2.5em;
             text-shadow: 2px 2px 0px #f3e5f5;
         }
 
         .subtitle {
             text-align: center;
-            color: #888;
-            margin-bottom: 30px;
-            font-size: 1em;
-            word-break: keep-all;
-            line-height: 1.5;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+            line-height: 1.6;
         }
 
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 8px; color: #6a4c93; font-weight: 700; }
+        .input-group { margin-bottom: 20px; }
+        label { 
+            display: block; 
+            margin-bottom: 10px; 
+            color: var(--secondary-color); 
+            font-family: 'Jua', sans-serif; 
+            font-size: 1.2em;
+        }
         
         input, select {
             width: 100%;
@@ -72,495 +99,607 @@
             border: 2px solid #e1bee7;
             border-radius: 15px;
             font-size: 16px;
-            background: #f3e5f5;
-            color: #4a148c;
+            background: #fbf6fd;
+            transition: all 0.3s;
+            font-family: 'Gowun Dodum', sans-serif;
         }
 
         input:focus, select:focus {
             outline: none;
-            border-color: #ba68c8;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(155, 89, 182, 0.1);
             background: #fff;
         }
 
         .btn {
-            background: linear-gradient(90deg, #ff758c, #ff7eb3); /* 핫핑크 계열 버튼 */
+            background: linear-gradient(90deg, #ff758c, #ff7eb3);
             color: white;
-            padding: 18px;
+            padding: 20px;
             border: none;
             border-radius: 50px;
-            font-size: 18px;
+            font-size: 1.3em;
+            font-family: 'Jua', sans-serif;
             cursor: pointer;
-            transition: transform 0.2s;
-            display: block;
+            transition: all 0.3s;
             width: 100%;
-            font-weight: 700;
-            box-shadow: 0 5px 15px rgba(255, 117, 140, 0.4);
-            margin-top: 20px;
+            margin-top: auto; /* 하단 배치 */
+            box-shadow: 0 10px 20px rgba(255, 117, 140, 0.3);
         }
         
-        .btn:hover { transform: translateY(-3px); background: linear-gradient(90deg, #ff5e78, #ff6b9d); }
+        .btn:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 15px 25px rgba(255, 117, 140, 0.4);
+        }
 
-        .progress-bar {
-            background: #f3e5f5;
-            height: 12px;
-            border-radius: 10px;
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        /* 퀴즈 화면 스타일 */
+        .progress-container {
+            width: 100%;
+            height: 15px;
+            background-color: #f0f0f0;
+            border-radius: 20px;
             margin-bottom: 30px;
             overflow: hidden;
         }
 
         .progress-fill {
-            background: linear-gradient(90deg, #b39ddb, #ff80ab);
             height: 100%;
-            transition: width 0.3s;
+            background: linear-gradient(90deg, #a18cd1, #fbc2eb);
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+            border-radius: 20px;
         }
 
         .question-number {
             text-align: center;
-            color: #ba68c8;
-            font-size: 1.2em;
-            margin-bottom: 15px;
-            font-weight: 800;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 10px;
         }
 
         .question-text {
-            font-size: 1.4em;
+            font-family: 'Jua', sans-serif;
+            font-size: 1.6em;
             text-align: center;
             color: #4a4a4a;
-            margin-bottom: 30px;
-            line-height: 1.5;
+            margin-bottom: 40px;
+            line-height: 1.4;
             word-break: keep-all;
-            font-weight: 700;
         }
 
         .answers {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
         }
 
         .answer-btn {
             background: white;
             border: 2px solid #e1bee7;
             padding: 20px;
-            border-radius: 15px;
+            border-radius: 20px;
             font-size: 1.1em;
             cursor: pointer;
             text-align: left;
             color: #555;
             transition: all 0.2s;
-            word-break: keep-all;
+            font-family: 'Gowun Dodum', sans-serif;
             line-height: 1.4;
         }
 
         .answer-btn:hover {
-            border-color: #ce93d8;
-            background: #f8bbd0;
-            color: #880e4f;
-            transform: scale(1.02);
+            border-color: var(--primary-color);
+            background: #f8effd;
+            transform: translateX(5px);
+            color: var(--primary-color);
+            font-weight: bold;
         }
 
         /* 결과 화면 스타일 */
-        .report-info {
-            background: #f3e5f5;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
+        .report-header {
             display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 10px;
+            justify-content: space-between;
+            background: #f3e5f5;
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            font-size: 0.95em;
+        }
+        
+        .report-header span {
+            color: #6a1b9a;
+            font-weight: bold;
         }
 
-        .info-item { text-align: center; min-width: 70px; }
-        .info-label { font-size: 12px; color: #9575cd; margin-bottom: 3px; }
-        .info-value { font-size: 15px; font-weight: 700; color: #6a1b9a; }
-
         .result-card {
-            background: linear-gradient(135deg, #9796f0 0%, #fbc7d4 100%); /* 보라-핑크 그라데이션 */
+            background: linear-gradient(135deg, #9796f0 0%, #fbc7d4 100%);
             color: #fff;
-            padding: 30px 20px;
-            border-radius: 20px;
+            padding: 40px 20px;
+            border-radius: 25px;
             text-align: center;
             margin-bottom: 30px;
-            box-shadow: 0 10px 20px rgba(151, 150, 240, 0.3);
+            box-shadow: 0 15px 30px rgba(151, 150, 240, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card::before {
+            content: '👑';
+            font-size: 100px;
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            opacity: 0.2;
+            transform: rotate(15deg);
         }
 
         .result-type {
-            font-size: 2em;
-            font-weight: 800;
+            font-family: 'Jua', sans-serif;
+            font-size: 2.5em;
             margin: 10px 0;
             word-break: keep-all;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.15);
         }
 
         .section-title {
-            font-size: 1.2em;
-            color: #8e24aa;
-            margin-bottom: 10px;
-            border-bottom: 2px solid #e1bee7;
+            font-family: 'Jua', sans-serif;
+            font-size: 1.3em;
+            color: var(--secondary-color);
+            margin: 30px 0 15px 0;
+            border-bottom: 3px solid #f3e5f5;
             padding-bottom: 5px;
-            font-weight: 800;
-            margin-top: 25px;
         }
 
-        .section-content {
-            font-size: 1em;
-            color: #444;
-            line-height: 1.6;
-            margin-bottom: 15px;
-            word-break: keep-all;
+        .section-content ul {
+            list-style: none;
         }
 
-        .section-content ul { padding-left: 20px; margin: 0; }
-        .section-content li { margin-bottom: 5px; }
+        .section-content li {
+            margin-bottom: 10px;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .section-content li::before {
+            content: '✔️';
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+        }
 
         .pill {
             display: inline-block;
-            background: #e1bee7;
-            color: #4a148c;
-            padding: 8px 15px;
-            border-radius: 20px;
-            margin: 3px;
-            font-size: 0.9em;
-            font-weight: 600;
+            background: #fff;
+            border: 2px solid #e1bee7;
+            color: var(--secondary-color);
+            padding: 8px 16px;
+            border-radius: 25px;
+            margin: 4px;
+            font-size: 0.95em;
+            font-weight: bold;
         }
 
         .advice-box {
-            background: #e8f5e9; /* 조언은 눈이 편한 연두빛 살짝 섞거나 */
-            background: #fff3e0; /* 따뜻한 색 */
-            background: #fce4ec; /* 핑크빛 */
-            border-left: 5px solid #f48fb1;
-            padding: 15px;
-            border-radius: 5px;
-            color: #880e4f;
+            background: #fff8e1;
+            border-left: 6px solid #ffca28;
+            padding: 20px;
+            border-radius: 10px;
+            color: #5d4037;
+            font-size: 1.1em;
+            line-height: 1.6;
             font-style: italic;
         }
 
         @media (min-width: 600px) {
-            .answers { display: grid; grid-template-columns: 1fr 1fr; }
-            .container { padding: 40px; }
-            .result-type { font-size: 2.5em; }
+            .answers { grid-template-columns: 1fr 1fr; }
+            .btn { width: auto; min-width: 200px; margin: 20px auto 0; display: block; }
         }
-        
+
         @media print {
-            .btn { display: none; }
-            .container { box-shadow: none; max-height: none; border: none; }
+            .btn, .progress-container { display: none; }
+            .container { box-shadow: none; border: none; width: 100%; max-width: 100%; }
+            body { background: white; }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- 시작 화면 -->
         <div id="startScreen" class="screen active">
-            <h1>🦄 진로 드림<br>강점 분석 (초등용)</h1>
-            <div class="subtitle">나는 어떤 특별한 힘을 가지고 있을까?<br>재미있는 퀴즈로 알아보아요!</div>
+            <h1>🦄 진로 드림<br>강점 분석</h1>
+            <div class="subtitle">나는 어떤 특별한 힘을 가지고 있을까요?<br>재미있는 퀴즈로 나의 숨겨진 강점을 찾아보아요!</div>
             
-            <div id="startError" style="display:none; color:#e91e63; text-align:center; margin-bottom:10px; font-weight:bold;">이름과 학년을 모두 입력해주세요!</div>
+            <div id="startError" style="display:none; color:#ff4081; text-align:center; margin-bottom:15px; font-weight:bold; background:#fce4ec; padding:10px; border-radius:10px;">
+                ⚠️ 이름과 학년을 모두 입력해주세요!
+            </div>
 
             <div class="input-group">
-                <label>이름</label>
-                <input type="text" id="userName" placeholder="이름을 써주세요">
+                <label>이름이 뭐예요?</label>
+                <input type="text" id="userName" placeholder="이름을 입력해주세요" autocomplete="off">
             </div>
             <div class="input-group">
-                <label>학년</label>
+                <label>학년을 알려주세요</label>
                 <select id="userGrade">
-                    <option value="">학년을 골라주세요</option>
-                    <option value="초등학교 1학년">초등학교 1학년</option>
-                    <option value="초등학교 2학년">초등학교 2학년</option>
-                    <option value="초등학교 3학년">초등학교 3학년</option>
-                    <option value="초등학교 4학년">초등학교 4학년</option>
-                    <option value="초등학교 5학년">초등학교 5학년</option>
-                    <option value="초등학교 6학년">초등학교 6학년</option>
+                    <option value="">학년 선택</option>
+                    <option value="1학년">초등학교 1학년</option>
+                    <option value="2학년">초등학교 2학년</option>
+                    <option value="3학년">초등학교 3학년</option>
+                    <option value="4학년">초등학교 4학년</option>
+                    <option value="5학년">초등학교 5학년</option>
+                    <option value="6학년">초등학교 6학년</option>
                 </select>
             </div>
-            <button class="btn" onclick="startQuiz()">검사 시작하기</button>
+            <button class="btn" onclick="startQuiz()">검사 시작하기 🚀</button>
         </div>
 
+        <!-- 퀴즈 화면 -->
         <div id="quizScreen" class="screen">
-            <div class="progress-bar"><div id="progressFill" class="progress-fill" style="width:0%"></div></div>
-            <div class="question-number" id="questionNumber">1 / 20</div>
-            <div class="question-text" id="questionText">질문 내용</div>
+            <div class="progress-container">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <div class="question-number" id="questionNumber">Question 1 / 20</div>
+            <div class="question-text" id="questionText">질문이 여기에 나옵니다</div>
             <div class="answers" id="answersContainer"></div>
         </div>
 
+        <!-- 결과 로딩 화면 -->
+        <div id="loadingScreen" class="screen" style="justify-content: center; align-items: center; text-align: center;">
+            <h2 style="color: var(--secondary-color); font-family: 'Jua'; font-size: 2em;">분석 중... 🔮</h2>
+            <p>나의 강점을 찾고 있어요!</p>
+        </div>
+
+        <!-- 결과 화면 -->
         <div id="resultScreen" class="screen">
-            <div class="report-info">
-                <div class="info-item"><div class="info-label">이름</div><div class="info-value" id="resultName"></div></div>
-                <div class="info-item"><div class="info-label">학년</div><div class="info-value" id="resultGrade"></div></div>
-                <div class="info-item"><div class="info-label">검사일</div><div class="info-value" id="resultDate"></div></div>
+            <div class="report-header">
+                <div>이름: <span id="resultName"></span></div>
+                <div>학년: <span id="resultGrade"></span></div>
+                <div>날짜: <span id="resultDate"></span></div>
             </div>
 
             <div class="result-card">
-                <div style="font-size: 0.9em; opacity: 0.9;">나의 강점 유형은?</div>
-                <div class="result-type" id="resultType">유형 이름</div>
-                <div id="resultSubtitle" style="opacity: 0.95; font-size: 1em; margin-top:5px;"></div>
+                <div style="font-size: 1em; opacity: 0.9; margin-bottom: 5px;">나의 강점 유형은?</div>
+                <div class="result-type" id="resultType"></div>
+                <div id="resultSubtitle" style="font-weight: bold; opacity: 0.95;"></div>
             </div>
 
             <div class="section-title">✨ 나의 특징</div>
             <div class="section-content"><ul id="strengthsList"></ul></div>
 
-            <div class="section-title">🏫 추천 진로 및 과목</div>
+            <div class="section-title">🏫 추천 진로 & 과목</div>
             <div class="section-content"><ul id="careersList"></ul></div>
 
-            <div class="section-title">💪 나의 능력 (역량)</div>
+            <div class="section-title">💪 나의 특별한 능력</div>
             <div class="section-content" id="competencyTags"></div>
 
             <div class="section-title">💌 나에게 주는 조언</div>
             <div class="section-content advice-box" id="adviceContent"></div>
 
-            <button class="btn" onclick="window.print()">결과 인쇄하기</button>
-            <button class="btn" onclick="location.reload()" style="background:#e0e0e0; color:#555; margin-top:15px;">다시 하기</button>
+            <div style="display: flex; gap: 10px; margin-top: 30px; flex-direction: column;">
+                <button class="btn" onclick="window.print()">결과 저장/인쇄하기 🖨️</button>
+                <button class="btn" onclick="location.reload()" style="background: #e0e0e0; color: #555; box-shadow: none;">다시 하기 🔄</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // 10가지 유형 데이터 (이미지 기반)
+        // 데이터 (10가지 유형)
         const resultData = {
             "창의적인 기획자": {
-                subtitle: "새로운 아이디어가 퐁퐁!",
-                strengths: ["새로운 아이디어를 생각하는 걸 좋아해요", "남들과 똑같은 건 싫어해요", "나만의 방법으로 표현해요"],
-                careers: ["디자이너, 웹툰 작가", "영상 크리에이터", "광고 기획자", "추천과목: 미술, 음악"],
-                competencies: ["창의적 사고", "미적 감각", "이야기 만들기"],
+                subtitle: "새로운 아이디어가 퐁퐁! 🎨",
+                strengths: ["남들과 똑같은 건 싫어하고, 새로운 걸 좋아해요.", "상상력이 풍부하고 나만의 방법으로 표현해요.", "엉뚱하지만 재미있는 생각이 많아요."],
+                careers: ["디자이너, 웹툰 작가", "유튜버(크리에이터)", "광고 기획자", "추천 과목: 미술, 음악"],
+                competencies: ["창의적 사고", "미적 감각", "아이디어"],
                 advice: "\"세상을 너만의 색깔로 칠해봐. 너의 상상력이 가장 큰 무기야!\""
             },
             "탐구하는 분석가": {
-                subtitle: "궁금한 건 못 참아!",
-                strengths: ["'왜?'라는 질문을 자주 해요", "깊이 파고들어 생각해요", "관찰하고 실험하는 걸 좋아해요"],
-                careers: ["과학자, 프로그래머", "의사, 탐정", "데이터 분석가", "추천과목: 수학, 과학"],
-                competencies: ["비판적 사고", "문제 해결", "정보 분석"],
+                subtitle: "궁금한 건 못 참아! 🔍",
+                strengths: ["'왜?'라는 질문을 자주 하고 깊이 생각해요.", "관찰하고 실험하는 것을 좋아해요.", "논리적으로 따져보는 걸 잘해요."],
+                careers: ["과학자, 의사", "프로그래머(개발자)", "프로파일러", "추천 과목: 수학, 과학"],
+                competencies: ["비판적 사고", "문제 해결", "분석력"],
                 advice: "\"궁금한 것을 끝까지 파헤쳐봐. 지식이 너의 길을 밝혀줄 거야.\""
             },
             "공감하는 조력자": {
-                subtitle: "따뜻한 마음의 천사",
-                strengths: ["친구의 마음을 잘 이해해요", "도와주는 것에서 기쁨을 느껴요", "싸움을 말리고 화해시켜요"],
-                careers: ["선생님, 상담사", "간호사, 사회복지사", "추천과목: 도덕, 사회"],
-                competencies: ["공감 능력", "소통", "협동심"],
-                advice: "\"너의 따뜻한 마음은 친구들을 행복하게 해. 사람들의 마음에 귀 기울여 봐.\""
+                subtitle: "따뜻한 마음의 천사 👼",
+                strengths: ["친구의 마음을 잘 이해하고 위로해줘요.", "도와주는 것에서 기쁨을 느껴요.", "싸움을 말리고 화해시키는 평화주의자예요."],
+                careers: ["선생님, 심리상담가", "의사/간호사", "사회복지사", "추천 과목: 도덕, 국어"],
+                competencies: ["공감 능력", "배려심", "소통"],
+                advice: "\"너의 따뜻한 마음은 친구들을 행복하게 해. 지금처럼 상냥한 마음을 간직해줘.\""
             },
             "주도적인 실행가": {
-                subtitle: "멋진 리더 대장",
-                strengths: ["목표를 세우고 바로 시작해요", "친구들을 이끄는 걸 잘해요", "어려운 일도 씩씩하게 도전해요"],
-                careers: ["CEO(사장님), 변호사", "정치인, 방송 PD", "추천과목: 사회, 토론"],
-                competencies: ["리더십", "발표 능력", "결정력"],
+                subtitle: "멋진 리더 대장 🚩",
+                strengths: ["목표를 정하면 바로 행동으로 옮겨요.", "친구들을 이끌고 분위기를 주도해요.", "어려운 일도 씩씩하게 도전해요."],
+                careers: ["CEO(사장님)", "정치인, 변호사", "방송 PD", "추천 과목: 사회, 체육"],
+                competencies: ["리더십", "추진력", "자신감"],
                 advice: "\"네가 가는 길이 곧 새로운 길이야. 세상을 이끄는 너의 힘을 믿어!\""
             },
             "실천적인 제작자": {
-                subtitle: "금손 뚝딱이",
-                strengths: ["말보다 직접 해보는 게 좋아요", "손으로 만들거나 몸 쓰는 걸 잘해요", "고장 난 물건을 잘 고쳐요"],
-                careers: ["로봇 기술자, 요리사", "운동선수, 건축가", "수의사", "추천과목: 체육, 실과"],
-                competencies: ["도구 사용", "신체 능력", "문제 해결"],
+                subtitle: "금손 뚝딱이 🛠️",
+                strengths: ["말보다 직접 해보는 게 좋아요.", "손으로 만들거나 몸 쓰는 걸 잘해요.", "고장 난 물건을 뚝딱 고쳐요."],
+                careers: ["로봇 공학자", "요리사, 제과제빵사", "운동선수, 건축가", "추천 과목: 실과, 체육"],
+                competencies: ["도구 활용", "신체 능력", "손재주"],
                 advice: "\"생각을 현실로 만드는 너의 손과 발을 믿어. 너는 무엇이든 만들 수 있어.\""
             },
             "꼼꼼한 관리자": {
-                subtitle: "완벽한 계획왕",
-                strengths: ["작은 것도 놓치지 않고 꼼꼼해요", "계획을 세워서 차근차근 해요", "규칙과 약속을 잘 지켜요"],
-                careers: ["회계사, 공무원", "컴퓨터 프로그래머", "사서", "추천과목: 수학, 역사"],
-                competencies: ["분석 능력", "계획성", "집중력"],
+                subtitle: "완벽한 계획왕 📝",
+                strengths: ["작은 것도 놓치지 않고 꼼꼼해요.", "계획을 세워서 차근차근 실천해요.", "규칙과 약속을 아주 잘 지켜요."],
+                careers: ["회계사, 은행원", "데이터 분석가", "약사, 공무원", "추천 과목: 수학, 사회"],
+                competencies: ["정확성", "계획성", "성실함"],
                 advice: "\"작은 차이가 큰 변화를 만들어. 너의 꼼꼼함이 세상을 더 완벽하게 할 거야.\""
             },
             "표현하는 전달자": {
-                subtitle: "말하기 글쓰기 대장",
-                strengths: ["내 생각을 말이나 글로 잘 표현해요", "발표하는 게 재미있어요", "사람들 앞에서 이야기하는 걸 즐겨요"],
-                careers: ["아나운서, 기자", "배우, 작가", "유튜버", "추천과목: 국어, 영어"],
-                competencies: ["소통 능력", "발표력", "설득력"],
-                advice: "\"너의 목소리와 글로 세상을 감동시켜봐. 너의 표현이 곧 메시지야.\""
+                subtitle: "말하기 글쓰기 대장 🎤",
+                strengths: ["내 생각을 말이나 글로 재미있게 표현해요.", "사람들 앞에서 이야기하는 걸 즐겨요.", "설득력이 있고 유머 감각이 있어요."],
+                careers: ["아나운서, 기자", "배우, 가수", "작가", "추천 과목: 국어, 영어"],
+                competencies: ["발표력", "전달력", "친화력"],
+                advice: "\"너의 목소리와 글로 세상을 감동시켜봐. 너의 표현이 곧 멋진 메시지야.\""
             },
             "도전하는 개척가": {
-                subtitle: "용감한 모험가",
-                strengths: ["새로운 일에 도전하는 게 신나요", "실패해도 다시 일어나요", "경쟁하고 이기는 걸 좋아해요"],
-                careers: ["창업가, 스포츠 선수", "소방관, 탐험가", "투자자", "추천과목: 체육, 지리"],
-                competencies: ["회복 탄력성", "위기 대처", "적응력"],
-                advice: "\"넘어져도 괜찮아! 다시 일어서면 돼. 너의 용기가 널 성장시킬 거야.\""
+                subtitle: "용감한 모험가 🚀",
+                strengths: ["새로운 일에 도전하는 게 신나요.", "실패를 두려워하지 않고 다시 일어나요.", "경쟁하고 이기는 것을 좋아해요."],
+                careers: ["창업가(스타트업)", "스포츠 선수", "여행가, 소방관", "추천 과목: 체육, 사회"],
+                competencies: ["도전 정신", "위기 대처", "용기"],
+                advice: "\"넘어져도 괜찮아! 다시 일어서면 돼. 너의 용기가 널 크게 성장시킬 거야.\""
             },
             "조화로운 중재자": {
-                subtitle: "평화 지킴이",
-                strengths: ["친구들 사이가 좋은 게 중요해요", "여러 의견을 잘 들어줘요", "싸움보다는 평화를 원해요"],
-                careers: ["외교관, 상담가", "디자이너", "프로젝트 매니저", "추천과목: 사회, 외국어"],
-                competencies: ["팀워크", "갈등 해결", "배려"],
+                subtitle: "평화 지킴이 🕊️",
+                strengths: ["모두가 사이좋게 지내는 게 중요해요.", "여러 의견을 잘 듣고 조율해요.", "적을 만들지 않고 두루두루 친해요."],
+                careers: ["외교관", "매니저", "인사 담당자", "추천 과목: 사회, 외국어"],
+                competencies: ["협동심", "갈등 해결", "유연성"],
                 advice: "\"너와 내가 '우리'가 되게 하는 힘, 그게 바로 너야. 평화로운 세상을 만들어 줘.\""
             },
             "융합하는 혁신가": {
-                subtitle: "똑똑한 발명가",
-                strengths: ["여러 가지에 관심이 많아요", "서로 다른 걸 섞어서 새롭게 만들어요", "새로운 걸 빨리 배워요"],
-                careers: ["AI 전문가, 발명가", "컨설턴트", "기획자", "추천과목: 과학, 코딩"],
-                competencies: ["융합적 사고", "창의력", "빠른 학습"],
+                subtitle: "똑똑한 발명가 💡",
+                strengths: ["여러 분야에 호기심이 많아요.", "서로 다른 걸 섞어서 새롭게 만들어요.", "새로운 기술을 배우는 게 빨라요."],
+                careers: ["AI 전문가", "발명가", "문화 기획자", "추천 과목: 과학, 코딩"],
+                competencies: ["융합 사고", "응용력", "학습 능력"],
                 advice: "\"세상의 모든 지식이 너의 재료야. 경계를 넘어 새로운 걸 만들어봐!\""
             }
         };
 
-        // 20문항 데이터
+        // 질문 및 선택지 데이터 (변수명 통일됨)
         const quizData = [
             { q: "학교에서 그림 그리기 숙제를 받았어요. 나는?", a: [
                 {t: "어떤 순서로 그릴지 차근차근 계획을 세운다", type: "꼼꼼한 관리자"},
-                {t: "멋진 그림들을 먼저 찾아본다", type: "탐구하는 분석가"},
+                {t: "멋진 그림들을 먼저 찾아보며 연구한다", type: "탐구하는 분석가"},
                 {t: "친구와 함께 그리자고 이야기한다", type: "공감하는 조력자"},
                 {t: "일단 그리고 싶은 것부터 신나게 그린다", type: "주도적인 실행가"}
             ]},
             { q: "친구들과 놀 때 나는 주로...", a: [
-                {t: "놀이의 규칙을 정하고 이끄는 편이다", type: "주도적인 실행가"},
-                {t: "이 놀이에서 이기는 방법을 생각한다", type: "탐구하는 분석가"},
-                {t: "친구들이 싸우지 않게 도와준다", type: "조화로운 중재자"},
-                {t: "제일 앞에서 신나게 뛰어다닌다", type: "실천적인 제작자"}
+                {t: "놀이의 규칙을 정하고 대장을 맡는다", type: "주도적인 실행가"},
+                {t: "이 놀이에서 이기는 전략을 생각한다", type: "탐구하는 분석가"},
+                {t: "친구들이 싸우지 않게 잘 챙겨준다", type: "조화로운 중재자"},
+                {t: "제일 앞에서 신나게 몸으로 뛴다", type: "실천적인 제작자"}
             ]},
             { q: "레고나 찰흙으로 무언가를 만들 때 나는?", a: [
-                {t: "아무도 생각 못한 멋진 모양을 만든다", type: "창의적인 기획자"},
-                {t: "설명서대로 순서에 맞게 만든다", type: "꼼꼼한 관리자"},
-                {t: "내가 만든 것을 친구들에게 자랑한다", type: "표현하는 전달자"},
-                {t: "여러 가지 재료를 섞어 새롭게 만든다", type: "융합하는 혁신가"}
+                {t: "아무도 생각 못한 독특한 모양을 만든다", type: "창의적인 기획자"},
+                {t: "설명서대로 순서에 맞게 정확히 만든다", type: "꼼꼼한 관리자"},
+                {t: "내가 만든 것을 친구들에게 설명하고 자랑한다", type: "표현하는 전달자"},
+                {t: "여러 재료를 섞어 완전히 새로운 걸 만든다", type: "융합하는 혁신가"}
             ]},
             { q: "친구들 앞에서 발표를 할 때 나는...", a: [
-                {t: "준비한 순서대로 차근차근 말한다", type: "꼼꼼한 관리자"},
-                {t: "내가 아는 것을 정확하게 말한다", type: "탐구하는 분석가"},
-                {t: "친구들이 재미있게 웃으면서 말한다", type: "표현하는 전달자"},
-                {t: "자신감 있게 큰 목소리로 말한다", type: "도전하는 개척가"}
+                {t: "준비한 순서대로 빠짐없이 말한다", type: "꼼꼼한 관리자"},
+                {t: "내가 조사한 정보를 정확하게 전달한다", type: "탐구하는 분석가"},
+                {t: "친구들이 깔깔 웃을 수 있게 재미있게 말한다", type: "표현하는 전달자"},
+                {t: "자신감 있게 큰 목소리로 씩씩하게 말한다", type: "도전하는 개척가"}
             ]},
             { q: "아주 어려운 수학 문제를 만났을 때 나는?", a: [
-                {t: "풀이 순서를 정해서 차근차근 푼다", type: "꼼꼼한 관리자"},
-                {t: "왜 이런 답이 나오는지 궁금해한다", type: "탐구하는 분석가"},
-                {t: "친구와 함께 의논하며 푼다", type: "공감하는 조력자"},
+                {t: "풀이 순서를 정해서 하나씩 푼다", type: "꼼꼼한 관리자"},
+                {t: "도대체 왜 이런 답이 나오는지 궁금해한다", type: "탐구하는 분석가"},
+                {t: "친구와 함께 머리를 맞대고 푼다", type: "공감하는 조력자"},
                 {t: "다른 친구들이 안 쓰는 새로운 방법으로 푼다", type: "융합하는 혁신가"}
             ]},
             { q: "주말에 시간이 많을 때 나는 주로...", a: [
                 {t: "내일 학교 갈 준비물을 미리 챙긴다", type: "꼼꼼한 관리자"},
-                {t: "궁금했던 것을 책이나 컴퓨터로 찾아본다", type: "탐구하는 분석가"},
+                {t: "평소 궁금했던 것을 책이나 유튜브로 찾아본다", type: "탐구하는 분석가"},
                 {t: "친구를 만나거나 가족을 돕는다", type: "공감하는 조력자"},
-                {t: "새로운 장소에 놀러 가자고 조른다", type: "도전하는 개척가"}
+                {t: "안 가본 새로운 장소에 놀러 가자고 조른다", type: "도전하는 개척가"}
             ]},
             { q: "친구가 슬퍼 보일 때 나는?", a: [
-                {t: "무슨 일이 있었는지 해결책을 찾아준다", type: "주도적인 실행가"},
+                {t: "무슨 일이 있었는지 해결 방법을 찾아준다", type: "주도적인 실행가"},
                 {t: "왜 슬픈지 이유를 자세히 물어본다", type: "탐구하는 분석가"},
-                {t: "옆에 가서 \"괜찮아?\" 하고 위로해준다", type: "공감하는 조력자"},
+                {t: "옆에 가서 등 토닥이며 위로해준다", type: "공감하는 조력자"},
                 {t: "재미있는 이야기를 해서 웃겨준다", type: "표현하는 전달자"}
             ]},
             { q: "방 청소를 할 때 나는?", a: [
-                {t: "어디부터 치울지 계획을 세운다", type: "꼼꼼한 관리자"},
-                {t: "비슷한 물건끼리 모아서 분류한다", type: "탐구하는 분석가"},
-                {t: "내 손으로 직접 구석구석 닦는다", type: "실천적인 제작자"},
-                {t: "나만의 멋진 방으로 꾸민다", type: "창의적인 기획자"}
+                {t: "어디부터 치울지 계획을 세우고 시작한다", type: "꼼꼼한 관리자"},
+                {t: "비슷한 물건끼리 모아서 종류별로 정리한다", type: "탐구하는 분석가"},
+                {t: "내 손으로 직접 구석구석 닦고 치운다", type: "실천적인 제작자"},
+                {t: "가구 위치도 바꾸고 예쁘게 새로 꾸민다", type: "창의적인 기획자"}
             ]},
             { q: "일기나 편지를 쓸 때 나는?", a: [
-                {t: "오늘 한 일을 빠짐없이 적는다", type: "꼼꼼한 관리자"},
-                {t: "사실대로 정확하게 적는다", type: "탐구하는 분석가"},
-                {t: "내 기분과 생각을 실감 나게 적는다", type: "표현하는 전달자"},
-                {t: "남들과 다르게 멋진 말로 꾸며 쓴다", type: "창의적인 기획자"}
+                {t: "오늘 한 일을 시간 순서대로 적는다", type: "꼼꼼한 관리자"},
+                {t: "사실대로 정확하게 기록한다", type: "탐구하는 분석가"},
+                {t: "내 기분과 생각을 실감 나게 표현한다", type: "표현하는 전달자"},
+                {t: "남들과 다르게 멋진 말이나 그림으로 꾸민다", type: "창의적인 기획자"}
             ]},
             { q: "친구들이 서로 의견이 달라 다툴 때 나는?", a: [
-                {t: "양쪽이 다 지킬 수 있는 규칙을 정해준다", type: "조화로운 중재자"},
-                {t: "누구 말이 맞는지 잘 들어보고 판단한다", type: "탐구하는 분석가"},
-                {t: "\"우리 싸우지 말고 사이좋게 지내자\"고 말한다", type: "공감하는 조력자"},
-                {t: "둘 다 좋아할 새로운 놀이를 제안한다", type: "융합하는 혁신가"}
+                {t: "양쪽 다 공평한 규칙을 정해준다", type: "조화로운 중재자"},
+                {t: "누구 말이 논리적으로 맞는지 따져본다", type: "탐구하는 분석가"},
+                {t: "\"우리 싸우지 말고 사이좋게 지내자\"고 말린다", type: "공감하는 조력자"},
+                {t: "둘 다 좋아할 만한 제3의 방법을 제안한다", type: "융합하는 혁신가"}
             ]},
             { q: "학예회 준비를 할 때 나는?", a: [
-                {t: "누가 무엇을 할지 역할을 정해준다", type: "주도적인 실행가"},
-                {t: "어떻게 하면 더 잘할지 방법을 찾는다", type: "탐구하는 분석가"},
-                {t: "친구들을 응원하고 도와준다", type: "공감하는 조력자"},
-                {t: "무대에서 춤추거나 몸을 움직이는 걸 맡는다", type: "실천적인 제작자"}
+                {t: "누가 무엇을 할지 역할을 정해주는 대장이 된다", type: "주도적인 실행가"},
+                {t: "어떻게 하면 더 잘할지 방법을 연구한다", type: "탐구하는 분석가"},
+                {t: "힘들어하는 친구들을 응원하고 도와준다", type: "공감하는 조력자"},
+                {t: "무대 장치를 만들거나 춤추는 역할을 맡는다", type: "실천적인 제작자"}
             ]},
             { q: "새로운 동아리를 고를 때 중요한 것은?", a: [
-                {t: "규칙이 있고 배울 게 확실한 동아리", type: "꼼꼼한 관리자"},
-                {t: "새로운 것을 연구하는 동아리", type: "탐구하는 분석가"},
-                {t: "친구들과 사이좋게 지내는 동아리", type: "조화로운 중재자"},
-                {t: "직접 만들고 실험하는 동아리", type: "실천적인 제작자"}
+                {t: "계획이 잘 짜여있고 배울 게 확실한 곳", type: "꼼꼼한 관리자"},
+                {t: "새로운 지식을 탐구하는 곳", type: "탐구하는 분석가"},
+                {t: "친구들과 화기애애하게 지내는 곳", type: "조화로운 중재자"},
+                {t: "직접 만들고 실험하며 활동하는 곳", type: "실천적인 제작자"}
             ]},
             { q: "숙제를 다 끝낼 때 가장 신경 쓰는 것은?", a: [
-                {t: "빠뜨린 것 없이 다 했는지 확인하는 것", type: "꼼꼼한 관리자"},
-                {t: "발표할 때 친구들이 잘 알아듣게 쓰는 것", type: "표현하는 전달자"},
-                {t: "나만의 생각이나 그림을 멋지게 꾸미는 것", type: "창의적인 기획자"},
-                {t: "빨리 끝내고 노는 것", type: "주도적인 실행가"}
+                {t: "빠뜨린 것 없이 완벽하게 했는지 확인", type: "꼼꼼한 관리자"},
+                {t: "발표할 때 친구들이 잘 알아듣게 썼는지 확인", type: "표현하는 전달자"},
+                {t: "나만의 생각이나 그림을 멋지게 넣었는지 확인", type: "창의적인 기획자"},
+                {t: "빨리 끝내고 놀러 갈 수 있는지 확인", type: "주도적인 실행가"}
             ]},
-            { q: "내가 좋아하는 것을 친구에게 설명할 때?", a: [
-                {t: "순서대로 차근차근 설명한다", type: "꼼꼼한 관리자"},
-                {t: "그것에 대해 내가 아는 모든 지식을 말한다", type: "탐구하는 분석가"},
-                {t: "친구가 공감할 수 있게 재미있게 말한다", type: "표현하는 전달자"},
-                {t: "친구는 모를 것 같은 새로운 점을 말한다", type: "도전하는 개척가"}
+            { q: "내가 좋아하는 것을 친구에게 소개할 때?", a: [
+                {t: "순서대로 차근차근 설명해준다", type: "꼼꼼한 관리자"},
+                {t: "그것에 대한 모든 정보와 지식을 말해준다", type: "탐구하는 분석가"},
+                {t: "친구가 푹 빠질 수 있게 재미있게 말해준다", type: "표현하는 전달자"},
+                {t: "친구는 모를 것 같은 아주 새로운 점을 말해준다", type: "도전하는 개척가"}
             ]},
             { q: "친구와 의견이 다를 때 나는?", a: [
-                {t: "왜 생각이 다른지 차근차근 설명한다", type: "표현하는 전달자"},
-                {t: "친구의 생각이 왜 틀렸는지 알려준다", type: "탐구하는 분석가"},
-                {t: "친구의 기분이 상하지 않게 맞춰준다", type: "조화로운 중재자"},
-                {t: "내 생각과 친구 생각을 합쳐 더 좋은 방법을 찾는다", type: "융합하는 혁신가"}
+                {t: "왜 내 생각이 그런지 말로 잘 설득한다", type: "표현하는 전달자"},
+                {t: "친구의 생각에서 틀린 점을 찾아준다", type: "탐구하는 분석가"},
+                {t: "친구의 기분이 상하지 않게 맞춰주는 편이다", type: "조화로운 중재자"},
+                {t: "내 생각과 친구 생각을 합쳐 더 좋은 걸 만든다", type: "융합하는 혁신가"}
             ]},
             { q: "내년의 내 모습을 상상해 본다면?", a: [
-                {t: "운동을 잘하고 튼튼해질 거야", type: "실천적인 제작자"},
-                {t: "더 많은 책을 읽고 똑똑해질 거야", type: "탐구하는 분석가"},
-                {t: "친구들과 더 많이 친해질 거야", type: "공감하는 조력자"},
-                {t: "아무도 못 해본 새로운 모험을 할 거야", type: "도전하는 개척가"}
+                {t: "운동을 잘하고 몸이 튼튼한 아이", type: "실천적인 제작자"},
+                {t: "박사님처럼 아는 게 많은 똑똑한 아이", type: "탐구하는 분석가"},
+                {t: "친구들에게 인기가 많고 친절한 아이", type: "공감하는 조력자"},
+                {t: "아무도 안 해본 모험을 떠나는 용감한 아이", type: "도전하는 개척가"}
             ]},
             { q: "만약 내가 반장이 된다면 하고 싶은 것은?", a: [
-                {t: "우리 반 규칙을 잘 지키게 만들고 싶다", type: "꼼꼼한 관리자"},
-                {t: "친구들을 이끌고 멋진 반을 만들고 싶다", type: "주도적인 실행가"},
-                {t: "힘들어하는 친구들을 돕고 싶다", type: "공감하는 조력자"},
-                {t: "우리 반을 위해 몸으로 뛰는 일을 할 거다", type: "실천적인 제작자"}
+                {t: "우리 반 규칙을 잘 지키는 모범 반 만들기", type: "꼼꼼한 관리자"},
+                {t: "친구들을 이끌고 1등 반 만들기", type: "주도적인 실행가"},
+                {t: "소외되는 친구 없이 모두가 행복한 반 만들기", type: "공감하는 조력자"},
+                {t: "우리 반을 위해 몸으로 뛰며 봉사하기", type: "실천적인 제작자"}
             ]},
             { q: "만들기 시간, 무엇을 중요하게 생각하나요?", a: [
-                {t: "설명서대로 튼튼하게 만드는 것", type: "꼼꼼한 관리자"},
-                {t: "누가 봐도 멋지다고 할 만큼 잘 만드는 것", type: "주도적인 실행가"},
+                {t: "설명서대로 튼튼하고 정확하게 만드는 것", type: "꼼꼼한 관리자"},
+                {t: "누가 봐도 '우와' 할 만큼 멋지게 만드는 것", type: "주도적인 실행가"},
                 {t: "내 생각대로 독특하고 예쁘게 꾸미는 것", type: "창의적인 기획자"},
-                {t: "여러 가지 재료를 섞어서 특이하게 만드는 것", type: "융합하는 혁신가"}
+                {t: "여러 재료를 섞어서 신기하게 만드는 것", type: "융합하는 혁신가"}
             ]},
-            { q: "내가 새로 알게 된 것을 친구에게 알려줄 때?", a: [
-                {t: "알기 쉽게 정리해서 알려준다", type: "꼼꼼한 관리자"},
-                {t: "틀린 내용이 없는지 확인하고 알려준다", type: "탐구하는 분석가"},
-                {t: "표정과 손짓을 써가며 실감 나게 알려준다", type: "표현하는 전달자"},
-                {t: "이건 비밀인데 너만 알라며 신나게 알려준다", type: "도전하는 개척가"}
+            { q: "내가 새로 알게 된 사실을 친구에게 말할 때?", a: [
+                {t: "알기 쉽게 요점만 정리해서 말한다", type: "꼼꼼한 관리자"},
+                {t: "혹시 틀린 내용은 없는지 확인하고 말한다", type: "탐구하는 분석가"},
+                {t: "표정과 손짓을 써가며 실감 나게 연기한다", type: "표현하는 전달자"},
+                {t: "이건 대박 사건이라며 흥분해서 말한다", type: "도전하는 개척가"}
             ]},
             { q: "길을 잃어버렸을 때 나는?", a: [
-                {t: "왔던 길을 순서대로 다시 생각해본다", type: "꼼꼼한 관리자"},
-                {t: "주변에 표지판이나 지도가 있는지 찾아본다", type: "탐구하는 분석가"},
+                {t: "왔던 길을 기억해내며 차분히 돌아간다", type: "꼼꼼한 관리자"},
+                {t: "주변에 지도나 표지판이 있는지 분석한다", type: "탐구하는 분석가"},
                 {t: "근처에 있는 어른에게 도움을 요청한다", type: "공감하는 조력자"},
-                {t: "새로운 길로 일단 가보며 모험을 한다", type: "도전하는 개척가"}
+                {t: "새로운 길로 가보며 모험이라고 생각한다", type: "도전하는 개척가"}
             ]}
         ];
 
+        // 변수 설정
         let currentQ = 0;
         let scores = {};
 
+        // 화면 전환 함수 (부드럽게)
+        function switchScreen(fromId, toId) {
+            const fromScreen = document.getElementById(fromId);
+            const toScreen = document.getElementById(toId);
+            
+            fromScreen.style.opacity = 0;
+            setTimeout(() => {
+                fromScreen.classList.remove('active');
+                toScreen.classList.add('active');
+                // 리플로우 강제 실행 (애니메이션 재시작을 위해)
+                void toScreen.offsetWidth; 
+                toScreen.style.opacity = 1;
+            }, 300);
+        }
+
+        // 검사 시작
         function startQuiz() {
             const name = document.getElementById('userName').value;
             const grade = document.getElementById('userGrade').value;
-            if(!name || !grade) {
+            
+            if(!name.trim() || !grade) {
                 document.getElementById('startError').style.display = 'block';
+                // 흔들리는 애니메이션 효과
+                const btn = document.querySelector('#startScreen .btn');
+                btn.style.transform = 'translateX(10px)';
+                setTimeout(() => btn.style.transform = 'translateX(-10px)', 100);
+                setTimeout(() => btn.style.transform = 'translateX(0)', 200);
                 return;
             }
+            
+            // 점수 초기화
             for(let key in resultData) scores[key] = 0;
             
-            document.getElementById('startScreen').classList.remove('active');
-            document.getElementById('quizScreen').classList.add('active');
+            switchScreen('startScreen', 'quizScreen');
             showQuestion();
         }
 
+        // 질문 보여주기
         function showQuestion() {
             const q = quizData[currentQ];
-            document.getElementById('progressFill').style.width = ((currentQ+1)/quizData.length*100) + '%';
-            document.getElementById('questionNumber').innerText = (currentQ+1) + ' / ' + quizData.length;
-            document.getElementById('questionText').innerText = q.question;
             
-            const container = document.getElementById('answersContainer');
-            container.innerHTML = '';
+            // 진행바 업데이트
+            const progress = ((currentQ) / quizData.length) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
             
-            q.answers.forEach(ans => {
+            // 페이드 효과를 위해 텍스트 투명도 조절
+            const qText = document.getElementById('questionText');
+            const aContainer = document.getElementById('answersContainer');
+            
+            // 데이터 매핑 (q.q, ans.t 사용)
+            document.getElementById('questionNumber').innerText = `Question ${currentQ + 1} / ${quizData.length}`;
+            qText.innerText = q.q;
+            
+            aContainer.innerHTML = '';
+            
+            q.a.forEach((ans, index) => {
                 const btn = document.createElement('button');
                 btn.className = 'answer-btn';
-                btn.innerText = ans.text;
+                btn.innerText = ans.t;
+                
+                // 버튼 등장 애니메이션 (순차적으로)
+                btn.style.opacity = 0;
+                btn.style.transform = 'translateY(20px)';
+                
                 btn.onclick = () => {
-                    scores[ans.type]++;
-                    nextQuestion();
+                    // 선택 효과
+                    btn.style.background = '#9b59b6';
+                    btn.style.color = 'white';
+                    setTimeout(() => selectAnswer(ans.type), 200);
                 };
-                container.appendChild(btn);
+                
+                aContainer.appendChild(btn);
+                
+                // 순차적 등장
+                setTimeout(() => {
+                    btn.style.transition = 'all 0.5s ease';
+                    btn.style.opacity = 1;
+                    btn.style.transform = 'translateY(0)';
+                }, index * 100);
             });
         }
 
-        function nextQuestion() {
+        // 답변 선택 처리
+        function selectAnswer(type) {
+            scores[type]++;
+            
             if(currentQ < quizData.length - 1) {
                 currentQ++;
                 showQuestion();
             } else {
-                showResult();
+                // 진행바 100%
+                document.getElementById('progressFill').style.width = '100%';
+                finishQuiz();
             }
         }
 
+        // 퀴즈 종료 및 결과 처리
+        function finishQuiz() {
+            switchScreen('quizScreen', 'loadingScreen');
+            
+            // 로딩 효과 (2초 후 결과 보여줌)
+            setTimeout(() => {
+                showResult();
+                switchScreen('loadingScreen', 'resultScreen');
+            }, 2000);
+        }
+
+        // 결과 보여주기
         function showResult() {
+            // 최고 점수 유형 찾기
             let max = -1;
             let type = '';
+            // 동점자 처리: 랜덤 섞기를 하지 않고 데이터 순서대로 하거나
+            // 여기서는 단순히 가장 높은 점수를 찾음
             for(let key in scores) {
                 if(scores[key] > max) {
                     max = scores[key];
@@ -573,39 +712,49 @@
             const grade = document.getElementById('userGrade').value;
             const date = new Date().toLocaleDateString();
 
+            // 기본 정보 입력
             document.getElementById('resultName').innerText = name;
             document.getElementById('resultGrade').innerText = grade;
             document.getElementById('resultDate').innerText = date;
             
+            // 결과 내용 입력
             document.getElementById('resultType').innerText = type;
             document.getElementById('resultSubtitle').innerText = info.subtitle;
 
+            // 리스트 채우기 함수
             const fillList = (id, arr) => {
                 const el = document.getElementById(id);
                 el.innerHTML = '';
-                arr.forEach(txt => {
+                arr.forEach((txt, idx) => {
                     const li = document.createElement('li');
                     li.innerText = txt;
+                    // 리스트 아이템 순차 등장
+                    li.style.opacity = 0;
+                    li.style.transform = 'translateX(-10px)';
+                    li.style.transition = `all 0.5s ease ${idx * 0.1}s`;
                     el.appendChild(li);
+                    
+                    setTimeout(() => {
+                        li.style.opacity = 1;
+                        li.style.transform = 'translateX(0)';
+                    }, 100);
                 });
             };
 
             fillList('strengthsList', info.strengths);
             fillList('careersList', info.careers);
             
+            // 태그 채우기
             const tagsEl = document.getElementById('competencyTags');
             tagsEl.innerHTML = '';
             info.competencies.forEach(txt => {
                 const span = document.createElement('span');
                 span.className = 'pill';
-                span.innerText = txt;
+                span.innerText = `#${txt}`;
                 tagsEl.appendChild(span);
             });
 
             document.getElementById('adviceContent').innerText = info.advice;
-
-            document.getElementById('quizScreen').classList.remove('active');
-            document.getElementById('resultScreen').classList.add('active');
         }
     </script>
 </body>
